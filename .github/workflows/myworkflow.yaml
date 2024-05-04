@@ -7,11 +7,29 @@ on:
     - master
     tags:
     - 'realease/v<digit>.<digit>'
+    rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
   pull_request:
 
 jobs:
+  Check-commit-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+ 
+      - name: Get Latest Commit Message
+        id: commit_message
+        run: echo "::set-output name=message::$(git log -1 --pretty=format:'%s')"
+ 
+      - name: Stop Workflow if Commit Message Starts with #NORUN
+        if: startsWith(steps.commit_message.outputs.message, '#NORUN')
+        run: |
+          echo "Commit message starts with #NORUN, stopping workflow."
+          exit 0
+  
   # name of may job
-  SA58_Team7_DAI_GAOLUO_CI_CD:
+  Scan_the_code_base_for_vulnerabilities:
     #runner
     runs-on: ubuntu-latest
     #steps in this job

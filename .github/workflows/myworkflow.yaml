@@ -2,7 +2,12 @@ name: My CI_CD workflow
 
 # my trigger
 on:
-- push
+  push:
+    branches:
+    - master
+    tags:
+    - 'realease/v<digit>.<digit>'
+  pull_request:
 
 jobs:
   # name of may job

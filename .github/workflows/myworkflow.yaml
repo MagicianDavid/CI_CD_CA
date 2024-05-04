@@ -6,7 +6,7 @@ on:
 
 jobs:
   # name of may job
-  SA58 Team7 DAI GAOLUO CI_CD:
+  SA58_Team7_DAI_GAOLUO_CI_CD:
     #runner
     runs-on: ubuntu-latest
     #steps in this job

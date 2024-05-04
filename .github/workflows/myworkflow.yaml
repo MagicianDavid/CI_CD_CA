@@ -12,6 +12,7 @@ on:
   pull_request:
 
 jobs:
+  # add comments to verify the commit check funciton
   Check-commit-message:
     runs-on: ubuntu-latest
     steps:

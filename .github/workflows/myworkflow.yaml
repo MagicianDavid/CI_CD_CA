@@ -7,8 +7,6 @@ on:
     - master
     tags:
     - 'realease/v<digit>.<digit>'
-    rules:
-    - if: '$CI_PIPELINE_SOURCE == "push"'
   pull_request:
 
 jobs:
@@ -23,7 +21,7 @@ jobs:
         id: commit_message
         run: echo "::set-output name=message::$(git log -1 --pretty=format:'%s')"
  
-      - name: Stop Workflow if Commit Message Starts with #NORUN
+      - name: Stop Workflow # if Commit Message Starts with 'NORUN'
         if: startsWith(steps.commit_message.outputs.message, '#NORUN')
         run: |
           echo "Commit message starts with #NORUN, stopping workflow."
@@ -44,3 +42,23 @@ jobs:
         scan-type: 'fs'
         scan-ref: '.'
         trivy-config: trivy.yaml
+  
+  # notification to slack using Technique 2: Slack App
+  # Send_GitHub_Action_trigger_data_to_Slack_workflow:
+  # id: slack
+  # uses: slackapi/slack-github-action@v1.26.0
+  # env:
+  #   SLACK_WEBHOOK_TEST_URL: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}
+
+  - name: Post to a Slack channel
+  id: slack
+  uses: slackapi/slack-github-action@v1.26.0
+  with:
+    # Slack channel id, channel name, or user id to post message.
+    # See also: https://api.slack.com/methods/chat.postMessage#channels
+    # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
+    channel-id: 'CHANNEL_ID,ANOTHER_CHANNEL_ID'
+    # For posting a simple plain text message
+    slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+  env:
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

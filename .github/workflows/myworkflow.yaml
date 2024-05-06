@@ -11,7 +11,7 @@ on:
 
 jobs:
   # add comments to verify the commit check funciton
-  Check-commit-message:
+  Check_commit_message:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -50,7 +50,7 @@ jobs:
   # env:
   #   SLACK_WEBHOOK_TEST_URL: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}
 
-  - name: Post to a Slack channel
+  Post_to_a_Slack_channel:
   id: slack
   uses: slackapi/slack-github-action@v1.26.0
   with:

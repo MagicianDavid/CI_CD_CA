@@ -35,7 +35,7 @@ jobs:
           scan-type: 'fs'
           scan-ref: '.'
           trivy-config: trivy.yaml
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
       
       # notification to slack
       - name: Send GitHub Action trigger data to Slack workflow

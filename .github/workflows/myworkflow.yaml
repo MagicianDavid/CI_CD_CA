@@ -38,56 +38,7 @@ jobs:
           severity: 'CRITICAL'
       
       # notification to slack
-      - name: Send GitHub Action trigger data to Slack workflow
-        id: slack
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
-            {
-	            "blocks": [
-		            {
-			            "type": "context",
-			            "elements": [
-				            {
-					            "type": "image",
-					            "image_url": "https://api.slack.com/img/blocks/bkb_template_images/profile_1.png",
-					            "alt_text": "DAI GAOLUO"
-				            },
-				            {
-					            "type": "mrkdwn",
-					            "text": "*DAI GAOLUO*"
-				            }
-			            ]
-		            },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Ref:*\nComputer (laptop)"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Event:*\nSubmitted Aut 10"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Actions URL:*\n*<fakeLink.toEmployeeProfile.com|Build and Push>*"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Commit:*\n<fakeLink.toEmployeeProfile.com|CommitNo>"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Scan failed - DAI GAOLUO*\nFailed trivy scan, see uploaded report"
-                  }
-                }
-	            ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}    
+      - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  

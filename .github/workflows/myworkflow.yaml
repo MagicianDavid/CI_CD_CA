@@ -38,10 +38,24 @@ jobs:
           severity: 'CRITICAL'
       
       # notification to slack
-      - name: Slack Notification
+      - name: Slack Notification When trivy failure
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_TITLE: 'tiltle?'
-          SLACK_MESSAGE: 'testing'
-          SLACK_COLOR: 'success'
+          SLACK_TITLE: 'Scan failed - DAI GAOLUO'
+          SLACK_MESSAGE: 'failed trivy scan, see uploaded report'
+          SLACK_COLOR: 'failure'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  
+      
+      - name: Slack Notification When trivy success
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: 'Image build and signed'
+          SLACKIFY_MARKDOWN: 'true'
+          SLACK_MESSAGE: 
+            '**Name**: DAI GAOLUO
+             **Metriculation**: A0292132M
+             **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu)
+             **Git**: [https://github.com/MagicianDavid/CI_CD_CA](https://github.com/MagicianDavid/CI_CD_CA)
+             **Image**: [not yet]()'
+          SLACK_COLOR: 'failure'
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  

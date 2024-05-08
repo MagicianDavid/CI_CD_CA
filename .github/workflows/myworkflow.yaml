@@ -41,4 +41,6 @@ jobs:
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
+          SLACK_MESSAGE: 'testing'
+          SLACK_COLOR: 'failure'
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  

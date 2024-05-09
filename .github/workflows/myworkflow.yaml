@@ -99,4 +99,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: MagicianDavid/ci_cd_ca:latest
+          tags: user/app:latest

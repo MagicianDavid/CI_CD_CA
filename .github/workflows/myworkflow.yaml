@@ -104,7 +104,7 @@ jobs:
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
         env:
           TAGS: ${{ steps.build-and-push.tags }}
-          COSIGN_PRIVATE_KEY: ${{ cat cosign.key }}
+          COSIGN_PRIVATE_KEY: cosign.key
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
       - name: Sign the images with GitHub OIDC Token

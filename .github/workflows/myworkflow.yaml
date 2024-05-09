@@ -81,18 +81,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - id: docker_meta
-        uses: docker/metadata-action@v4.4.0
-        with:
-          images: go-fortune
-          tags: daigaoluo/go-fortune:${{ github.sha }}
-
-      - name: Build and Push container images
-        uses: docker/build-push-action@v4.0.0
-        id: build-and-push
+      - name: Build and push
+        id: docker_meta
+        uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ steps.docker_meta.outputs.tags }}
+          tags: daigaoluo/go-fortune:${{ github.sha }}
 
       # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
       - name: Sign image with a key

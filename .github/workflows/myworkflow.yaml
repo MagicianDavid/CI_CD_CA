@@ -50,7 +50,7 @@ jobs:
      
       # notification to slack
       - name: Slack Notification When trivy failure
-        if: steps.search_file.outputs.Trivy_Status == 'Failed'
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Failed'
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_TITLE: 'Scan failed - DAI GAOLUO'
@@ -59,7 +59,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  
 
       - name: Slack Upload Trivy
-        if: steps.search_file.outputs.Trivy_Status == 'Failed'
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Failed'
         uses: MeilCli/slack-upload-file@v4
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
           initial_comment: 'Scan report by DAI GAOLUO'
       
       - name: Slack Notification When trivy success
-        if: steps.search_file.outputs.Trivy_Status == 'Success'
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_TITLE: 'Image build and signed'

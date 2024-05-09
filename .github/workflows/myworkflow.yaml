@@ -91,10 +91,24 @@ jobs:
           push: true
           tags: daigaoluo/go-fortune:${{ github.sha }}
  
+      - name: Setup cosign
+        uses: sigstore/cosign-action@v1
+
       - name: Generate key pair
         run: |
-          cosign key delete --key cosign.pub
           cosign generate-key-pair > cosign.key
+
+      - name: Save public key to repository
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: GitHub Actions
+          author_email: github-actions[at]github.com
+          message: "Add cosign public key"
+          add: cosign.pub
+
+      - name: Save private key to GitHub Secret
+        run: |
+          echo "::set-secret name=COSIGN_PRIVATE_KEY::$(cat cosign.key)"
 
       - name: Sign image with a key
         run: |

@@ -97,7 +97,7 @@ jobs:
           done
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
         env:
-          TAGS: ${{ steps.build-and-push.outputs.tags }}
+          TAGS: daigaoluo/go-fortune:${{ github.sha }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}

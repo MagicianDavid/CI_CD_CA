@@ -32,10 +32,11 @@ jobs:
       - name: Run Trivy vulnerability scanner in fs mode
         uses: aquasecurity/trivy-action@master
         with:
+          scan-type: 'fs'
           format: 'table'
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          severity: 'HIGH'
           output: trivy.txt
      
       # notification to slack

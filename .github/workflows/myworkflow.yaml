@@ -86,9 +86,50 @@ jobs:
 
       - name: Build and push
         uses: docker/build-push-action@v5
+        id: build-and-push
         with:
           push: true
           tags: daigaoluo/go-fortune:${{ github.sha }}
+
+      - name: Setup cosign
+      uses: sigstore/cosign-action@v1
+ 
+      - name: Generate key pair
+        run: |
+          cosign generate-key-pair > cosign.key
+      - name: Save public key to repository
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: MagicianDavid
+          message: "Add cosign public key"
+          add: cosign.pub
+  
+      - name: Save private key to GitHub Secret
+        run: |
+          echo "::set-secret name=COSIGN_PRIVATE_KEY::$(cat cosign.key)"
+
+      - name: Sign image with a key
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
+        env:
+          TAGS: ${{ steps.build-and-push.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+
+      - name: Sign the images with GitHub OIDC Token
+        env:
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes ${images}
 
       - name: Slack Notification When trivy success
         uses: rtCamp/action-slack-notify@v2

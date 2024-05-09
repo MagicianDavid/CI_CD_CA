@@ -87,13 +87,11 @@ jobs:
       #   with:
       #     push: true
       #     tags: daigaoluo/go-fortune:${{ github.sha }}
- 
-      - name: Setup cosign
-        uses: sigstore/cosign-action@v1
-        
+
       - name: Clean Up Cosign Key
         run: |
-          cosign delete-key cosign.pub
+          rm -f ~/.sigstore/cosign.key
+          rm -f ~/.sigstore/cosign.pub
         shell: bash
 
       - name: Generate key pair

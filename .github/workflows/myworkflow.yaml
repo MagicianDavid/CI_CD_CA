@@ -52,10 +52,10 @@ jobs:
           SLACK_TITLE: 'Image build and signed'
           SLACKIFY_MARKDOWN: 'true'
           SLACK_MESSAGE: 
-            '**Name**: DAI GAOLUO
-             **Metriculation**: A0292132M
-             **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu)
-             **Git**: [$GITHUB_REPOSITORY]($GITHUB_REPOSITORY)
+            '**Name**: DAI GAOLUO \n
+             **Metriculation**: A0292132M \n
+             **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu) \n
+             **Git**: ${{ github.server_url }}/${{ github.repository }} \n
              **Image**: [not yet]()'
-          SLACK_COLOR: 'failure'
+          SLACK_COLOR: 'success'
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  

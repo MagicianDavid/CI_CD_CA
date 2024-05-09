@@ -101,6 +101,7 @@ jobs:
         uses: EndBug/add-and-commit@v7
         with:
           author_name: MagicianDavid
+          author_email: MagicianDavid/CI_CD_CA[at]github.com
           message: "Add cosign public key"
           add: cosign.pub
   

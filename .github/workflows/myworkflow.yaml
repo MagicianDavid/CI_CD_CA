@@ -29,14 +29,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Run Trivy vulnerability scanner in fs mode
+      # - name: Run Trivy vulnerability scanner in fs mode
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     scan-type: 'fs'
+      #     scan-ref: '.'
+      #     trivy-config: trivy.yaml
+      #     severity: 'CRITICAL'
+      - name: Run Trivy scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          trivy-config: trivy.yaml
-          severity: 'CRITICAL'
-      
+          scan-type: config
+          hide-progress: true
+          output: trivy.txt
+
+      - name: Publish Trivy Output to Summary
+        run: |
+          if [[ -s trivy.txt ]]; then
+            {
+              echo "### Security Output"
+              echo "<details><summary>Click to expand</summary>"
+              echo ""
+              echo '```terraform'
+              cat trivy.txt
+              echo '```'
+              echo "</details>"
+            } >> $GITHUB_STEP_SUMMARY
+          fi
+     
       # notification to slack
       - name: Slack Notification When trivy failure
         uses: rtCamp/action-slack-notify@v2
@@ -45,6 +65,14 @@ jobs:
           SLACK_MESSAGE: 'failed trivy scan, see uploaded report'
           SLACK_COLOR: 'failure'
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  
+
+      - name: Slack Upload Trivy
+        uses: MeilCli/slack-upload-file@v4
+        with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: 'trivy/*.txt'
+          initial_comment: 'post by slack-upload-file'
       
       - name: Slack Notification When trivy success
         uses: rtCamp/action-slack-notify@v2

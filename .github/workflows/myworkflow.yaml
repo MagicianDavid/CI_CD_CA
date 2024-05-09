@@ -81,13 +81,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        id: build-and-push
-        with:
-          push: true
-          tags: daigaoluo/go-fortune:${{ github.sha }}
-
       - id: docker_meta
         uses: docker/metadata-action@v4.4.0
         with:

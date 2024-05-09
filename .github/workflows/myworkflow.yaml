@@ -84,6 +84,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - id: docker_meta
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         uses: docker/metadata-action@v4.4.0
         with:
           images: ghcr.io/sigstore/sample-honk

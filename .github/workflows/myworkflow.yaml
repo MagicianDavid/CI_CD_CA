@@ -101,7 +101,7 @@ jobs:
           for tag in ${TAGS}; do
             images+="${tag}@${DIGEST} "
           done
-          cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}@${DIGEST}
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
         env:
           TAGS: daigaoluo/go-fortune:${{ github.sha }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}

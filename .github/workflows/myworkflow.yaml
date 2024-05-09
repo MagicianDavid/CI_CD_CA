@@ -93,10 +93,15 @@ jobs:
  
       # - name: Setup cosign
       #   uses: sigstore/cosign-action@v1
+      - name: Clean Up Cosign Key
+        run: |
+          rm -f ./cosign.key
+          rm -f ./cosign.pub
+        shell: bash
 
       - name: Generate key pair
         run: |
-          cosign import-key-pair --yes
+          cosign generate-key-pair > cosign.key
 
       - name: Save public key to repository
         uses: EndBug/add-and-commit@v7

@@ -93,7 +93,7 @@ jobs:
  
       - name: Generate key pair
         run: |
-          cosign key delete -key cosign.pub
+          cosign key delete --key cosign.pub
           cosign generate-key-pair > cosign.key
 
       - name: Sign image with a key

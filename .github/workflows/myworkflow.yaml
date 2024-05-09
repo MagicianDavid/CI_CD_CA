@@ -67,11 +67,12 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  
 
       - name: Slack Upload Trivy
+        run: 'cat trivy.txt > trivy.txt'
         uses: MeilCli/slack-upload-file@v4
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          file_path: 'trivy/*.txt'
+          file_path: 'trivy.txt'
           initial_comment: 'post by slack-upload-file'
       
       - name: Slack Notification When trivy success

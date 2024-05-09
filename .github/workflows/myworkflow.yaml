@@ -94,6 +94,9 @@ jobs:
           rm -f ~/.sigstore/cosign.pub
         shell: bash
 
+      - name: List files in current directory
+        run: ls -a
+
       - name: Search for Cosign Key
         run: |
           if [[ -f cosign.key ]]; then
@@ -105,51 +108,51 @@ jobs:
       #   run: |
       #     rm -f cosign.key && cosign generate-key-pair > cosign.key
 
-      - name: Save public key to repository
-        uses: EndBug/add-and-commit@v7
-        with:
-          author_name: GitHub Actions
-          author_email: github-actions[at]github.com
-          message: "Add cosign public key"
-          add: cosign.pub
+      # - name: Save public key to repository
+      #   uses: EndBug/add-and-commit@v7
+      #   with:
+      #     author_name: GitHub Actions
+      #     author_email: github-actions[at]github.com
+      #     message: "Add cosign public key"
+      #     add: cosign.pub
 
-      - name: Save private key to GitHub Secret
-        run: |
-          echo "::set-secret name=COSIGN_PRIVATE_KEY::$(cat cosign.key)"
+      # - name: Save private key to GitHub Secret
+      #   run: |
+      #     echo "::set-secret name=COSIGN_PRIVATE_KEY::$(cat cosign.key)"
 
-      - name: Sign image with a key
-        run: |
-          images=""
-          for tag in ${TAGS}; do
-            images+="${tag}@${DIGEST} "
-          done
-          cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
-        env:
-          TAGS: ${{ steps.build-and-push.tags }}
-          COSIGN_PRIVATE_KEY: cosign.key
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+      # - name: Sign image with a key
+      #   run: |
+      #     images=""
+      #     for tag in ${TAGS}; do
+      #       images+="${tag}@${DIGEST} "
+      #     done
+      #     cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
+      #   env:
+      #     TAGS: ${{ steps.build-and-push.tags }}
+      #     COSIGN_PRIVATE_KEY: cosign.key
+      #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
-      - name: Sign the images with GitHub OIDC Token
-        env:
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          TAGS: ${{ steps.docker_meta.outputs.tags }}
-        run: |
-          images=""
-          for tag in ${TAGS}; do
-            images+="${tag}@${DIGEST} "
-          done
-          cosign sign --yes ${images}
+      # - name: Sign the images with GitHub OIDC Token
+      #   env:
+      #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
+      #     TAGS: ${{ steps.docker_meta.outputs.tags }}
+      #   run: |
+      #     images=""
+      #     for tag in ${TAGS}; do
+      #       images+="${tag}@${DIGEST} "
+      #     done
+      #     cosign sign --yes ${images}
 
-      - name: Slack Notification When trivy success
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_TITLE: 'Image build and signed'
-          SLACKIFY_MARKDOWN: 'true'
-          SLACK_MESSAGE: 
-            '**Name**: DAI GAOLUO \n
-            **Metriculation**: A0292132M \n
-            **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu) \n
-            **Git**: ${{ github.server_url }}/${{ github.repository }} \n
-            **Image**: [not yet]()'
-          SLACK_COLOR: 'success'
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  
+      # - name: Slack Notification When trivy success
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_TITLE: 'Image build and signed'
+      #     SLACKIFY_MARKDOWN: 'true'
+      #     SLACK_MESSAGE: 
+      #       '**Name**: DAI GAOLUO \n
+      #       **Metriculation**: A0292132M \n
+      #       **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu) \n
+      #       **Git**: ${{ github.server_url }}/${{ github.repository }} \n
+      #       **Image**: [not yet]()'
+      #     SLACK_COLOR: 'success'
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  

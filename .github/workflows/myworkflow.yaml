@@ -34,10 +34,9 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          trivy-config: trivy.yaml
           severity: 'CRITICAL'
           hide-progress: true
-          output: trivy.txt
+          output: 'trivy.txt'
         
       - name: Publish Trivy Output to Summary
         run: |

@@ -94,9 +94,16 @@ jobs:
           rm -f ~/.sigstore/cosign.pub
         shell: bash
 
-      - name: Generate key pair
+      - name: Search for Cosign Key
         run: |
-          rm -f cosign.key && cosign generate-key-pair > cosign.key
+          if [[ -f cosign.key ]]; then
+            echo "Cosign Key found."
+          else
+            echo "Cosign Key not found."
+          fi
+      # - name: Generate key pair
+      #   run: |
+      #     rm -f cosign.key && cosign generate-key-pair > cosign.key
 
       - name: Save public key to repository
         uses: EndBug/add-and-commit@v7

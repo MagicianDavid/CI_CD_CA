@@ -67,23 +67,9 @@ jobs:
           file_path: 'trivy.txt'
           initial_comment: 'Scan report by DAI GAOLUO'
       
-      - name: Slack Notification When trivy success
-        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_TITLE: 'Image build and signed'
-          SLACKIFY_MARKDOWN: 'true'
-          SLACK_MESSAGE: 
-            '**Name**: DAI GAOLUO \n
-            **Metriculation**: A0292132M \n
-            **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu) \n
-            **Git**: ${{ github.server_url }}/${{ github.repository }} \n
-            **Image**: [not yet]()'
-          SLACK_COLOR: 'success'
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  
-      
-      # docker build
+      # When trivy success, docker build
       - name: Set up QEMU
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
@@ -99,4 +85,18 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: user/app:latest
+          tags: dagaoluo/cicd:latest
+
+      - name: Slack Notification When trivy success
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: 'Image build and signed'
+          SLACKIFY_MARKDOWN: 'true'
+          SLACK_MESSAGE: 
+            '**Name**: DAI GAOLUO \n
+            **Metriculation**: A0292132M \n
+            **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu) \n
+            **Git**: ${{ github.server_url }}/${{ github.repository }} \n
+            **Image**: [not yet]()'
+          SLACK_COLOR: 'success'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  

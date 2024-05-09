@@ -64,9 +64,9 @@ jobs:
       #     file_path: 'trivy.txt'
       #     initial_comment: 'Scan report by DAI GAOLUO'
       
-      # # When trivy success, docker build
-      # - name: Install Cosign
-      #   uses: sigstore/cosign-installer@v3.5.0
+      # When trivy success, docker build
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
 
       # - name: Set up QEMU
       #   if: success() && steps.search_file.outputs.Trivy_Status == 'Success'

@@ -68,6 +68,9 @@ jobs:
           initial_comment: 'Scan report by DAI GAOLUO'
       
       # When trivy success, docker build
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+
       - name: Set up QEMU
         if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         uses: docker/setup-qemu-action@v3
@@ -80,12 +83,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push
+
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: daigaoluo/cicd:latest
+          tags: daigaoluo/go-fortune:${{ github_sha }}
 
       - name: Slack Notification When trivy success
         uses: rtCamp/action-slack-notify@v2

@@ -81,6 +81,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - id: docker_meta
+        uses: docker/metadata-action@v4.4.0
+        with:
+          images: ghcr.io/sigstore/sample-honk
+          tags: type=sha,format=long
+
       - name: Build and Push container images
         uses: docker/build-push-action@v4.0.0
         id: build-and-push
@@ -89,18 +95,18 @@ jobs:
           tags: daigaoluo/go-fortune:${{ github.sha }}
 
       # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
-      # - name: Sign image with a key
-      #   run: |
-      #     images=""
-      #     for tag in ${TAGS}; do
-      #       images+="${tag}@${DIGEST} "
-      #     done
-      #     cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}@${DIGEST}
-      #   env:
-      #     TAGS: daigaoluo/go-fortune:${{ github.sha }}
-      #     COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-      #     COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
+      - name: Sign image with a key
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}@${DIGEST}
+        env:
+          TAGS: daigaoluo/go-fortune:${{ github.sha }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
       - name: Sign the images with GitHub OIDC Token
         env:

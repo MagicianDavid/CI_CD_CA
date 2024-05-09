@@ -63,8 +63,6 @@ jobs:
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file_path: 'trivy.txt'
           initial_comment: 'Scan report by DAI GAOLUO'
-        run: | 
-          exit 0
       
       # When trivy success, docker build
       - name: Install Cosign
@@ -75,9 +73,11 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -90,6 +90,7 @@ jobs:
           tags: type=sha,format=long
 
       - name: Build and Push container images
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         uses: docker/build-push-action@v4.0.0
         id: build-and-push
         with:
@@ -98,6 +99,7 @@ jobs:
 
       # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
       - name: Sign image with a key
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         run: |
           images=""
           for tag in ${TAGS}; do
@@ -122,6 +124,7 @@ jobs:
       #     cosign sign --yes ${images}
 
       - name: Slack Notification When trivy success
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_TITLE: 'Image build and signed'

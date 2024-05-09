@@ -67,7 +67,6 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  
 
       - name: Slack Upload Trivy
-        run: 'cat trivy.txt > trivy.txt'
         uses: MeilCli/slack-upload-file@v4
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
@@ -82,9 +81,9 @@ jobs:
           SLACKIFY_MARKDOWN: 'true'
           SLACK_MESSAGE: 
             '**Name**: DAI GAOLUO \n
-             **Metriculation**: A0292132M \n
-             **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu) \n
-             **Git**: ${{ github.server_url }}/${{ github.repository }} \n
-             **Image**: [not yet]()'
+            **Metriculation**: A0292132M \n
+            **Email**: [e1338594@u.nus.edu](e1338594@u.nus.edu) \n
+            **Git**: ${{ github.server_url }}/${{ github.repository }} \n
+            **Image**: [not yet]()'
           SLACK_COLOR: 'success'
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_TEST_URL }}  

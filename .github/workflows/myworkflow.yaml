@@ -96,7 +96,7 @@ jobs:
 
       - name: Generate key pair
         run: |
-          cosign --yes generate-key-pair > cosign.key
+          cosign import-key-pair --yes > cosign.key
 
       - name: Save public key to repository
         uses: EndBug/add-and-commit@v7

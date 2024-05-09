@@ -92,9 +92,7 @@ jobs:
       #   uses: sigstore/cosign-action@v1
       - name: Clean Up Cosign Key
         run: |
-          rm -f ~/.cosign/cosign.password
-          rm -f ~/.cosign/cosign.key
-          rm -f ~/.cosign/cosign.pub
+          cosign delete-key cosign.pub
         shell: bash
 
       - name: Generate key pair

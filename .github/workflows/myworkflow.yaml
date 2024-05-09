@@ -92,7 +92,7 @@ jobs:
           tags: daigaoluo/go-fortune:${{ github.sha }}
 
       - name: Setup cosign
-      uses: sigstore/cosign-action@v1
+        uses: sigstore/cosign-action@v1
  
       - name: Generate key pair
         run: |

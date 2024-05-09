@@ -32,10 +32,10 @@ jobs:
       - name: Run Trivy vulnerability scanner in fs mode
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'config'
+          scan-type: config
           severity: 'CRITICAL'
           hide-progress: true
-          output: 'trivy.txt'
+          output: trivy.txt
         
       - name: Publish Trivy Output to Summary
         run: |

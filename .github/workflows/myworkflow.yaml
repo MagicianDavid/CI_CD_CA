@@ -68,80 +68,64 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
 
-      # - name: Set up QEMU
-      #   if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
-      #   uses: docker/setup-qemu-action@v3
+      - name: Set up QEMU
+        if: success() && steps.search_file.outputs.Trivy_Status == 'Success'
+        uses: docker/setup-qemu-action@v3
 
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      # - name: Login to Docker Hub
-      #   uses: docker/login-action@v3
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Build and push
-      #   uses: docker/build-push-action@v5
-      #   id: build-and-push
-      #   with:
-      #     push: true
-      #     tags: daigaoluo/go-fortune:${{ github.sha }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        id: build-and-push
+        with:
+          push: true
+          tags: daigaoluo/go-fortune:${{ github.sha }}
 
-      - name: Clean Up Cosign Key
+      - id: docker_meta
+        uses: docker/metadata-action@v4.4.0
+        with:
+          images: ghcr.io/sigstore/sample-honk
+          tags: daigaoluo/go-fortune:${{ github.sha }}
+
+      - name: Build and Push container images
+        uses: docker/build-push-action@v4.0.0
+        id: build-and-push
+        with:
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+
+      # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+      - name: Sign image with a key
         run: |
-          rm -f ~/.sigstore/cosign.key
-          rm -f ~/.sigstore/cosign.pub
-        shell: bash
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
+        env:
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
-      - name: List files in current directory
-        run: ls -a
-
-      - name: Search for Cosign Key
+      - name: Sign the images with GitHub OIDC Token
+        env:
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          TAGS: ${{ steps.docker_meta.outputs.tags }}
         run: |
-          if [[ -f cosign.key ]]; then
-            echo "Cosign Key found."
-          else
-            echo "Cosign Key not found."
-          fi
-      # - name: Generate key pair
-      #   run: |
-      #     rm -f cosign.key && cosign generate-key-pair > cosign.key
-
-      # - name: Save public key to repository
-      #   uses: EndBug/add-and-commit@v7
-      #   with:
-      #     author_name: GitHub Actions
-      #     author_email: github-actions[at]github.com
-      #     message: "Add cosign public key"
-      #     add: cosign.pub
-
-      # - name: Save private key to GitHub Secret
-      #   run: |
-      #     echo "::set-secret name=COSIGN_PRIVATE_KEY::$(cat cosign.key)"
-
-      # - name: Sign image with a key
-      #   run: |
-      #     images=""
-      #     for tag in ${TAGS}; do
-      #       images+="${tag}@${DIGEST} "
-      #     done
-      #     cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${images}
-      #   env:
-      #     TAGS: ${{ steps.build-and-push.tags }}
-      #     COSIGN_PRIVATE_KEY: cosign.key
-      #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
-
-      # - name: Sign the images with GitHub OIDC Token
-      #   env:
-      #     DIGEST: ${{ steps.build-and-push.outputs.digest }}
-      #     TAGS: ${{ steps.docker_meta.outputs.tags }}
-      #   run: |
-      #     images=""
-      #     for tag in ${TAGS}; do
-      #       images+="${tag}@${DIGEST} "
-      #     done
-      #     cosign sign --yes ${images}
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes ${images}
 
       # - name: Slack Notification When trivy success
       #   uses: rtCamp/action-slack-notify@v2

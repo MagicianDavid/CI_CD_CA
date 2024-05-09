@@ -85,7 +85,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: dagaoluo/cicd:latest
+          tags: daigaoluo/cicd:latest
 
       - name: Slack Notification When trivy success
         uses: rtCamp/action-slack-notify@v2
